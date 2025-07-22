@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "/home/yaffa/Java/javafx-sdk-21.0.5/lib/*.jar",
+        "mariadb-java-client-3.5.4.jar"
+    ]
+}
