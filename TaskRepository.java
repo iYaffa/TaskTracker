@@ -3,9 +3,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class TaskRepository {
     private final String URL = "jdbc:mariadb://localhost:3306/TaskTracker";
@@ -39,8 +41,8 @@ public class TaskRepository {
 
                 if (res.next()) {
                     int id = res.getInt(1);
-                    Task t = new Task(id + "", title, description, status, time);
-                    
+                    Task t = new Task(id + "", title, description, status, time.toString());
+
                 }
 
             } else {
@@ -51,5 +53,27 @@ public class TaskRepository {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void listTasks() {
+        try {
+            ArrayList<Task> allTasks = new ArrayList<>();
+            String listQuery = "SELECT * FROM Tasks;";
+            Statement stmt = connection.createStatement();
+            ResultSet results = stmt.executeQuery(listQuery);
+            System.out.println("id" + " | " + "title" + " | " + "desc" + " | " + "status" + " | " + "created at");
+            while (results.next())
+
+            {
+                String id = results.getInt(1) + "";
+                String title = results.getString("title");
+                String desc = results.getString("description");
+                String status = results.getString("status");
+                String time = results.getString("creationTime");
+                System.out.println(id + " | " + title + " | " + desc + " | " + status + " | " + time);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

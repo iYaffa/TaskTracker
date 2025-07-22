@@ -6,9 +6,9 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private LocalDateTime creationTime;
+    private String creationTime;
 
-    public Task(String id, String title, String description, String status, LocalDateTime time) {
+    public Task(String id, String title, String description, String status, String time) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -39,5 +39,12 @@ public class Task {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "|" + id + " | " + title + " | " + description + " | " + status
+                + " | " + creationTime + "|";
+    }
+    
 
 }

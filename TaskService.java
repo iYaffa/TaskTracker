@@ -30,7 +30,7 @@ public class TaskService {
 						updateTask();
 						break;
 					case 3:
-						System.out.println("view tasks");
+						listTasks();
 						break;
 					case 4:
 						System.out.println("view log");
@@ -45,11 +45,17 @@ public class TaskService {
 						System.out.println("Enter a valid number pleas!");
 				}
 			}
+			System.out.println(
+					"**************************");
 		}
 	}
 
+	private static void listTasks() {
+		taskRepository.listTasks();
+	}
+
 	private static void updateTask() {
-	
+
 	}
 
 	// the method to add a new task
