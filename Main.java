@@ -47,20 +47,28 @@ public class Main {
 	}
 
 	private static void addTask() {
-			
+
 		HashMap<Integer, String> statusChoices = new HashMap<>();
 		statusChoices.put(1, "pending");
 		statusChoices.put(2, "inProgress");
 		statusChoices.put(3, "done");
 		statusChoices.put(4, "canceled");
+		if (input.hasNextLine()) {
+			System.out.print("Please enter the task's title: ");
+			String title = input.nextLine();
 
-		if (input.hasNext()) {
-			System.out.println(
-				"Please enter the task's title: ");
-			String title = 
-			String[] info = input.nextLine().split(" | ");
-			System.out.println(info.length);
-			taskRepository.addTask(info[0], info[1], statusChoices.get(Integer.valueOf(info[3])));
+			System.out.print("Please enter the task's description: ");
+			String description = input.nextLine();
+
+			System.out.print(
+					"Please enter the corresponding number for status: \n" +
+							"1. Pending\n" +
+							"2. In progress\n" +
+							"3. Done\n" +
+							"4. Canceled\n");
+
+			String status = input.nextLine();
+			taskRepository.addTask(title, description, statusChoices.get(Integer.valueOf(status)));
 		}
 	}
 
