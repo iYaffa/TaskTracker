@@ -6,8 +6,9 @@ public class Task {
     private String title;
     private String description;
     private String status;
-private Time creationTime;
-    public Task(String id, String title, String description, String status, Time time) {
+    private LocalDateTime creationTime;
+
+    public Task(String id, String title, String description, String status, LocalDateTime time) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -38,6 +39,5 @@ private Time creationTime;
     public void setStatus(String status) {
         this.status = status;
     }
-
 
 }

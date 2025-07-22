@@ -1,12 +1,15 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.Scanner;
 
-public class Main {
+public class TaskService {
 	static TaskRepository taskRepository = new TaskRepository();
-	static Scanner input = new Scanner(System.in);
+	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+	public static HashMap<Integer, Task> cachedTasks = new HashMap<>();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		boolean stop = false;
 		while (!stop) {
@@ -15,8 +18,9 @@ public class Main {
 			System.out.println(
 					"Choose one of the following: \n1. Add a new task \n2. Update task status. \n3. View tasks.\n4. View log file.\n5. Exit");
 
-			if (input.hasNextInt()) {
-				int choice = input.nextInt();
+			String line = input.readLine();
+			if (line != null && !line.isEmpty()) {
+				int choice = Integer.parseInt(line.trim());
 				switch (choice) {
 
 					case 1:
@@ -40,36 +44,35 @@ public class Main {
 						break;
 					default:
 						System.out.println("Enter a valid number pleas!");
-
 				}
 			}
 		}
 	}
 
-	private static void addTask() {
+	// the method to add a new task
+	private static void addTask() throws IOException {
 
 		HashMap<Integer, String> statusChoices = new HashMap<>();
 		statusChoices.put(1, "pending");
 		statusChoices.put(2, "inProgress");
 		statusChoices.put(3, "done");
 		statusChoices.put(4, "canceled");
-		if (input.hasNextLine()) {
-			System.out.print("Please enter the task's title: ");
-			String title = input.nextLine();
 
-			System.out.print("Please enter the task's description: ");
-			String description = input.nextLine();
+		System.out.print("Please enter the task's title: ");
+		String title = input.readLine();
 
-			System.out.print(
-					"Please enter the corresponding number for status: \n" +
-							"1. Pending\n" +
-							"2. In progress\n" +
-							"3. Done\n" +
-							"4. Canceled\n");
+		System.out.print("Please enter the task's description: ");
+		String description = input.readLine();
 
-			String status = input.nextLine();
-			taskRepository.addTask(title, description, statusChoices.get(Integer.valueOf(status)));
-		}
+		System.out.print(
+				"Please enter the corresponding number for status: \n" +
+						"1. Pending\n" +
+						"2. In progress\n" +
+						"3. Done\n" +
+						"4. Canceled\n");
+
+		String statusInput = input.readLine();
+		taskRepository.addTask(title, description, statusChoices.get(Integer.valueOf(statusInput)));
 	}
 
 	// method to get the time of the day for the welcoming message
@@ -82,7 +85,6 @@ public class Main {
 			message = "afternoon";
 		} else {
 			message = "evening";
-
 		}
 		return message;
 	}
