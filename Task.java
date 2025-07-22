@@ -1,3 +1,4 @@
+import java.sql.Time;
 import java.time.LocalDateTime;
 
 public class Task {
@@ -5,14 +6,13 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private LocalDateTime creationTime;
-
-    public Task(String id, String title, String description, String status) {
+private Time creationTime;
+    public Task(String id, String title, String description, String status, Time time) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
-        creationTime = LocalDateTime.now();
+        creationTime = time;
     }
 
     public String getTitle() {
@@ -39,12 +39,5 @@ public class Task {
         this.status = status;
     }
 
-    public LocalDateTime getCreationTime() {
-        return creationTime;
-    }
-
-    public void setCreationTime(LocalDateTime creationTime) {
-        this.creationTime = creationTime;
-    }
 
 }
