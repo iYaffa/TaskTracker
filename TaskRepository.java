@@ -57,20 +57,20 @@ public class TaskRepository {
 
     public void listTasks() {
         try {
-            ArrayList<Task> allTasks = new ArrayList<>();
             String listQuery = "SELECT * FROM Tasks;";
             Statement stmt = connection.createStatement();
             ResultSet results = stmt.executeQuery(listQuery);
-            System.out.println("id" + " | " + "title" + " | " + "desc" + " | " + "status" + " | " + "created at");
+       System.out.printf("%-5s | %-20s | %-30s | %-12s | %-20s%n",
+                      "ID", "Title", "Description", "Status", "Created At");
+    System.out.println("--------------------------------------------------------------------------------------------");
             while (results.next())
-
             {
-                String id = results.getInt(1) + "";
-                String title = results.getString("title");
-                String desc = results.getString("description");
-                String status = results.getString("status");
-                String time = results.getString("creationTime");
-                System.out.println(id + " | " + title + " | " + desc + " | " + status + " | " + time);
+                 System.out.printf("%-5d | %-20s | %-30s | %-12s | %-20s%n",
+            results.getInt("id"),
+            results.getString("title"),
+            results.getString("description"),
+            results.getString("status"),
+            results.getTimestamp("creationTime"));
             }
         } catch (Exception e) {
             e.printStackTrace();
