@@ -16,7 +16,7 @@ public class TaskService {
 			String timeOfTheDay = getTimeOfTheDay();
 			System.out.println("Good " + timeOfTheDay + "!");
 			System.out.println(
-					"Choose one of the following: \n1. Add a new task \n2. Update task status. \n3. View tasks.\n4. View log file.\n5. Exit");
+					"**************************\nChoose one of the following: \n1. Add a new task \n2. Update task status. \n3. View tasks.\n4. View log file.\n5. Exit");
 
 			String line = input.readLine();
 			if (line != null && !line.isEmpty()) {
@@ -25,10 +25,9 @@ public class TaskService {
 
 					case 1:
 						addTask();
-						stop = true;
 						break;
 					case 2:
-						System.out.println("update");
+						updateTask();
 						break;
 					case 3:
 						System.out.println("view tasks");
@@ -47,6 +46,10 @@ public class TaskService {
 				}
 			}
 		}
+	}
+
+	private static void updateTask() {
+	
 	}
 
 	// the method to add a new task

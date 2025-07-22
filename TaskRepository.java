@@ -40,6 +40,7 @@ public class TaskRepository {
                 if (res.next()) {
                     int id = res.getInt(1);
                     Task t = new Task(id + "", title, description, status, time);
+                    
                 }
 
             } else {
