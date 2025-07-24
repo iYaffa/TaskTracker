@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 
 public class Task {
     private String id;
+
     private String title;
     private String description;
     private String status;
@@ -45,6 +46,10 @@ public class Task {
         return "|" + id + " | " + title + " | " + description + " | " + status
                 + " | " + creationTime + "|";
     }
-    
+
+    public String getId() {
+        return id;
+    }
+
 
 }

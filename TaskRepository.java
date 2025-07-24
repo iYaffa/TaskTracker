@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class TaskRepository {
                 if (res.next()) {
                     int id = res.getInt(1);
                     Task t = new Task(id + "", title, description, status, time.toString());
-
+                    TaskService.cachedTasks.put(id, t);
                 }
 
             } else {
@@ -60,20 +61,107 @@ public class TaskRepository {
             String listQuery = "SELECT * FROM Tasks;";
             Statement stmt = connection.createStatement();
             ResultSet results = stmt.executeQuery(listQuery);
-       System.out.printf("%-5s | %-20s | %-30s | %-12s | %-20s%n",
-                      "ID", "Title", "Description", "Status", "Created At");
-    System.out.println("--------------------------------------------------------------------------------------------");
-            while (results.next())
-            {
-                 System.out.printf("%-5d | %-20s | %-30s | %-12s | %-20s%n",
-            results.getInt("id"),
-            results.getString("title"),
-            results.getString("description"),
-            results.getString("status"),
-            results.getTimestamp("creationTime"));
+            System.out.printf("%-5s | %-20s | %-30s | %-12s | %-20s%n",
+                    "ID", "Title", "Description", "Status", "Created At");
+            System.out.println(
+                    "--------------------------------------------------------------------------------------------");
+            while (results.next()) {
+                System.out.printf("%-5d | %-20s | %-30s | %-12s | %-20s%n",
+                        results.getInt("id"),
+                        results.getString("title"),
+                        results.getString("description"),
+                        results.getString("status"),
+                        results.getTimestamp("creationTime"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public ArrayList<Task> findTasks(int filter, String answer) throws Exception {
+        ArrayList<Task> result = new ArrayList<>();
+        switch (filter) {
+            case 1:
+                result.add(searchById(answer));
+                break;
+            case 2:
+                searchByTitle(answer);
+                break;
+            case 3:
+                searchByStatus(answer);
+                break;
+
+            default:
+                throw new Exception("enter a correct number please!");
+        }
+        return result;
+    }
+
+    private Task searchById(String answer) throws SQLException {
+        Task res = null;
+        int id = Integer.parseInt(answer);
+        if (TaskService.cachedTasks.containsKey(id)) {
+            res = TaskService.cachedTasks.get(id);
+        } else {
+            String query = "SELECT * FROM Tasks WHERE id=(?)";
+            PreparedStatement prepStatement = connection.prepareStatement(query);
+            prepStatement.setInt(1, id);
+            ResultSet results = prepStatement.executeQuery();
+            while (results.next()) {
+                res = new Task(results.getInt("id") + "",
+                        results.getString("title"),
+                        results.getString("description"),
+                        results.getString("status"),
+                        results.getTimestamp("creationTime").toString());
+            }
+            TaskService.cachedTasks.put(id, res);
+        }
+        return res;
+
+    }
+
+    private ArrayList<Task> searchByStatus(String answer) throws SQLException {
+        ArrayList<Task> res = new ArrayList<>();
+        String query = "SELECT * FROM Tasks WHERE status=?";
+        PreparedStatement prepStatement = connection.prepareStatement(query);
+        prepStatement.setString(1, answer);
+        ResultSet results = prepStatement.executeQuery();
+        Task t = null;
+        while (results.next()) {
+            t = new Task(results.getInt("id") + "",
+                    results.getString("title"),
+                    results.getString("description"),
+                    results.getString("status"),
+                    results.getTimestamp("creationTime").toString());
+            res.add(t);
+        }
+        return res;
+    }
+
+    private ArrayList<Task> searchByTitle(String answer) throws SQLException {
+        ArrayList<Task> res = new ArrayList<>();
+        String query = "SELECT * FROM Tasks WHERE title like %?%";
+        PreparedStatement prepStatement = connection.prepareStatement(query);
+        prepStatement.setString(1, answer);
+        ResultSet results = prepStatement.executeQuery();
+        Task t = null;
+        while (results.next()) {
+            t = new Task(results.getInt("id") + "",
+                    results.getString("title"),
+                    results.getString("description"),
+                    results.getString("status"),
+                    results.getTimestamp("creationTime").toString());
+            res.add(t);
+        }
+        return res;
+    }
+
+    public void updateTaskStatus(String id, String status) throws SQLException {
+        String updateQuery = "UPDATE Tasks set status = ? WHERE id= ?";
+        PreparedStatement prep = connection.prepareStatement(updateQuery);
+        prep.setString(2, id);
+        prep.setString(1, status);
+        prep.executeUpdate();
+    }
+
 }
