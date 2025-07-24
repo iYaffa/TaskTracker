@@ -85,10 +85,10 @@ public class TaskRepository {
                 result.add(searchById(answer));
                 break;
             case 2:
-                searchByTitle(answer);
+                result = searchByTitle(answer);
                 break;
             case 3:
-                searchByStatus(answer);
+                result = searchByStatus(answer);
                 break;
 
             default:
@@ -140,9 +140,9 @@ public class TaskRepository {
 
     private ArrayList<Task> searchByTitle(String answer) throws SQLException {
         ArrayList<Task> res = new ArrayList<>();
-        String query = "SELECT * FROM Tasks WHERE title like %?%";
+        String query = "SELECT * FROM Tasks WHERE title like ?";
         PreparedStatement prepStatement = connection.prepareStatement(query);
-        prepStatement.setString(1, answer);
+        prepStatement.setString(1, "%" + answer + "%");
         ResultSet results = prepStatement.executeQuery();
         Task t = null;
         while (results.next()) {
