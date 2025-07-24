@@ -1,12 +1,10 @@
-import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -161,7 +159,41 @@ public class TaskRepository {
         PreparedStatement prep = connection.prepareStatement(updateQuery);
         prep.setString(2, id);
         prep.setString(1, status);
-        prep.executeUpdate();
+
+        String getTask = "Select * from Tasks WHERE id= ?";
+        PreparedStatement stmt = connection.prepareStatement(getTask);
+        stmt.setString(1, id);
+        ResultSet results = stmt.executeQuery();
+        if (results.next()) {
+            TaskService.cachedTasks.putIfAbsent(Integer.parseInt(id), new Task(results.getInt("id") + "",
+                    results.getString("title"),
+                    results.getString("description"),
+                    results.getString("status"),
+                    results.getTimestamp("creationTime").toString()));
+        }
+
+    }
+
+    public void deleteOldCompletedTasks() throws SQLException {
+        String searchQuery = "Select * from Tasks where status='done' ";
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(searchQuery);
+        while (res.next()) {
+            Timestamp time = res.getTimestamp("creationTime");
+            long diff = time.getTime() - System.currentTimeMillis();
+            if (diff >= (60 * 60 * 1000 * 24)) {
+                deleteQuery(res.getInt("id"), res.getString("title"));
+            }
+        }
+    }
+
+    private void deleteQuery(int id, String title) throws SQLException {
+
+        String deleteQuery = "DELETE FROM Tasks WHERE id = ?";
+        PreparedStatement prep = connection.prepareStatement(deleteQuery);
+        prep.setInt(id, 1);
+        prep.executeQuery();
+
     }
 
 }

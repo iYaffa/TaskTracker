@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 public class LoggerService {
     private final File logFile;
-    private final String filePath ="./logs/logFile.txt" ;
+    private final String filePath = "./taskLog.txt";
+
     public LoggerService() {
         this.logFile = new File(filePath);
 
@@ -22,9 +23,10 @@ public class LoggerService {
 
     public synchronized void log(String message) {
         try (PrintWriter out = new PrintWriter(new FileWriter(logFile, true))) {
-            out.println(LocalDateTime.now() + " - " + message);
+            out.println("[" + LocalDateTime.now() + "] " + message);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
 }
