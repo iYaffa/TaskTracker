@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
@@ -9,19 +10,18 @@ import java.util.HashMap;
 public class TaskService {
 	static final TaskRepository taskRepository = new TaskRepository();
 	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	static HashMap<Integer, String> statusChoices = new HashMap<>();
 	static HashMap<Integer, Task> cachedTasks = new HashMap<>();
 	static final LoggerService loggerService = new LoggerService();
 
 	public static void main(String[] args) throws Exception {
-		// fill status choices once
-		statusChoices.put(1, "pending");
-		statusChoices.put(2, "inProgress");
-		statusChoices.put(3, "done");
-		statusChoices.put(4, "canceled");
 
 		boolean stop = false;
 		try {
+
+			TaskCleaner cleaner = new TaskCleaner(taskRepository);
+			Thread cleanerThread = new Thread(cleaner);
+			cleanerThread.setDaemon(true); // so JVM can exit without waiting
+			cleanerThread.start();
 			while (!stop) {
 				String timeOfTheDay = getTimeOfTheDay();
 				System.out.println("Good " + timeOfTheDay + "!");
@@ -43,7 +43,7 @@ public class TaskService {
 							listTasks();
 							break;
 						case 4:
-							System.out.println("view log");
+							viewLogs();
 							break;
 						case 5:
 							stop = true;
@@ -63,6 +63,18 @@ public class TaskService {
 		} catch (SQLException r) {
 			r.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void viewLogs() {
+		String logFilePath = "taskLog.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(logFilePath))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -132,6 +144,12 @@ public class TaskService {
 
 	// method to get the status from the user
 	private static String getStatusChoice() throws IOException {
+		HashMap<Integer, String> statusChoices = new HashMap<>();
+
+		statusChoices.put(1, "pending");
+		statusChoices.put(2, "inProgress");
+		statusChoices.put(3, "done");
+		statusChoices.put(4, "canceled");
 		System.out.print(
 				"Please enter the corresponding number for status: \n" +
 						"1. Pending\n" +

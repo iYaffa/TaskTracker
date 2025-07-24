@@ -180,20 +180,21 @@ public class TaskRepository {
         ResultSet res = stmt.executeQuery(searchQuery);
         while (res.next()) {
             Timestamp time = res.getTimestamp("creationTime");
-            long diff = time.getTime() - System.currentTimeMillis();
-            if (diff >= (60 * 60 * 1000 * 24)) {
+            long diff = System.currentTimeMillis() - time.getTime();
+            long dayValue = (60 * 60 * 1000 * 24);
+            if (diff >= dayValue) {
                 deleteQuery(res.getInt("id"), res.getString("title"));
+                System.out.println(diff + res.getString("title"));
             }
         }
     }
 
     private void deleteQuery(int id, String title) throws SQLException {
-
         String deleteQuery = "DELETE FROM Tasks WHERE id = ?";
         PreparedStatement prep = connection.prepareStatement(deleteQuery);
-        prep.setInt(id, 1);
+        prep.setInt(1, id);
         prep.executeQuery();
-
+        TaskService.loggerService.log("Task deleted: '" + title + " '");
     }
 
 }

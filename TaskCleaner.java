@@ -1,20 +1,24 @@
+import java.sql.SQLException;
+
 public class TaskCleaner implements Runnable {
     private TaskRepository taskRepository;
-    boolean running = false;
+    boolean running = true;
 
     public TaskCleaner(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        running = true;
     }
 
     @Override
     public void run() {
         while (running) {
-            taskRepository.deleteOldCompletedTasks();
             try {
-                Thread.sleep(5 * 60 * 1000);
+
+                taskRepository.deleteOldCompletedTasks();
+                Thread.sleep(60 * 1 * 1000);
             } catch (InterruptedException e) {
                 running = false;
+                e.printStackTrace();
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
 

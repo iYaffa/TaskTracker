@@ -24,6 +24,7 @@ public class LoggerService {
     public synchronized void log(String message) {
         try (PrintWriter out = new PrintWriter(new FileWriter(logFile, true))) {
             out.println("[" + LocalDateTime.now() + "] " + message);
+            System.out.println("deleteddd");
         } catch (IOException e) {
             e.printStackTrace();
         }
